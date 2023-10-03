@@ -1,0 +1,22 @@
+{
+  "name": "dhcp-client-counter",
+  "version": "1.0.0",
+  "description": "An app for monitoring Windows DHCP Server logs for counting the number of clients over time.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CambridgeComputing/dhcp-client-counter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CambridgeComputing/dhcp-client-counter/issues"
+  },
+  "homepage": "https://github.com/CambridgeComputing/dhcp-client-counter#readme",
+  "dependencies": {
+    "mariadb": "^3.1.1"
+  }
+}
