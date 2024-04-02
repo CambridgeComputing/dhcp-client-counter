@@ -1,59 +1,61 @@
-// Import variables
-const SQLServer     = process.env.SQL_SERVER
-const SQLUser	    = process.env.SQL_USER
-const SQLPass	    = process.env.SQL_PASSWORD
-const SQLDB		    = process.env.SQL_DATABASE
+const mongoose = require('mongoose')
+const moment = require('moment')
+const line = '-'.repeat(process.stdout.columns)
 
-// Define connection pool for later use
-const mariadb = require('mariadb');
-const pool = mariadb.createPool({
-        host: SQLServer, 
-        user: SQLUser, 
-        password: SQLPass,
-        connectionLimit: 50,
-        database: SQLDB
-});
+const dbServer		= process.env.MONGO_SERVER
+const dbUser		= process.env.MONGO_USER
+const dbPass		= process.env.MONGO_PASSWORD
+const dbName		= process.env.MONGO_DATABASE
+const dbCollection	= process.env.MONGO_DB_COLLECTION
 
-// General query function
-function sqlQuery(query, cb){
-    pool.query(query, (err,rows, fields) => {
-        console.log("after query")
-        console.log(rows)
-        if(err){
-            console.log("Error while executing query: " + err)
-        }else{
-            cb(rows)
-        }
-    })
+// Configure connection
+console.log("Connecting to MongoDB...")
+mongoose.connect(`mongodb://${dbUser}:${dbPass}@${dbServer}/${dbName}?authSource=admin`)
+	.then(() => console.log('Connected to MongoDB.'))
+	.catch(err => console.error('Could not connect to MongoDB...', err))
+
+// Define Schema
+const recordSchema = new mongoose.Schema({
+	Timestamp: Date,    // Date and Time, needs to be stitched togehter from the logs
+	MACAddress: String, // MAC Address
+	IPAddress: String,  // IP Address
+	HostName: String	// Reported Hostname
+}, {collection: dbCollection})
+
+// Create Model from Schema
+const Record = mongoose.model('Record', recordSchema);
+
+// Create Timestamp from individual time/date fields
+function createTimestamp(date,time){
+	var strDateTime = date + " " + time								// Combine date and time strings
+	var objDate = moment.utc(strDateTime, 'MM/DD/YY HH:mm:ss')		// Parse the combined string to a Moment object
+	var strISODate = objDate.toISOString()                          // Convert the Moment object to an ISODate formatted string
+	return strISODate
 }
 
-// Store data function - IGNORE duplicate MAC addresses
-function storeData(objDevice, cb){
-    query = "INSERT IGNORE INTO devices(MACAddress,Date,Time,IPAddress,HostName) VALUES('" + objDevice.MACAddress + "',STR_TO_DATE('" + objDevice.Date + "','%m/%d/%Y'),'" + objDevice.Time + "','" + objDevice.IPAddress + "','" + objDevice.HostName + "');"
-    sqlQuery(query, function () {
-        console.log("Record added.")
-        cb()
-    })
+// Function to write data to DB
+async function createRecord(record) {
+	try {
+		const document = await record.save()
+		console.log(line)
+		// console.log("Record Created: " + document);
+		console.log("Record Created: " + document._id)
+	} catch (err) {
+		console.error(err);
+	}
 }
+  
 
-// Create DB and instantiate tables if not existing
-function initDB(cb){
-    console.log("Init DB Called.")
-    query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'dhcpclients';"
-    sqlQuery(query, function (res) {
-        console.log("DB YES!")
-        console.log(res)
-        cb()
-    })
-}
+function storeData(objRecord){
+	let record = new Record()
+	record.Timestamp = createTimestamp(objRecord.Date,objRecord.Time)
+	record.MACAddress = objRecord.MACAddress
+	record.IPAddress = objRecord.IPAddress
+	record.HostName = objRecord.HostName
 
-// Retrieve data function
-function getData(cb){
-
+	createRecord(record)
 }
 
 module.exports = {
-    storeData,
-    getData,
-    initDB
+	storeData
 }
