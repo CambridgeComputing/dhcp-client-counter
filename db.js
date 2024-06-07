@@ -16,7 +16,7 @@ mongoose.connect(`mongodb://${dbUser}:${dbPass}@${dbServer}/${dbName}?authSource
 
 // Define Schema
 const recordSchema = new mongoose.Schema({
-	Timestamp: Date,    // Date and Time, needs to be stitched togehter from the logs
+	Timestamp: Date,    // Date and Time, needs to be stitched together from the logs
 	MACAddress: String, // MAC Address
 	IPAddress: String,  // IP Address
 	HostName: String	// Reported Hostname
@@ -33,18 +33,37 @@ function createTimestamp(date,time){
 	return strISODate
 }
 
+// Function to delete all records from DB - USED FOR TESTING, REMOVE WHEN FINISHED!
+async function deleteAllRecords() {
+    try {
+        const result = await Record.deleteMany({});
+        console.log(`${result.deletedCount} records deleted.`);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 // Function to write data to DB
 async function createRecord(record) {
 	try {
+		// Check if a record with the same MACAddress and Timestamp already exists
+		const existingRecord = await Record.findOne({
+			MACAddress: record.MACAddress,
+			Timestamp: record.Timestamp,
+		});
+
+		if (existingRecord) {
+			// A record with the same MACAddress and Timestamp already exists
+			console.log("Record already exists. Skipping...");
+			return;
+		}
 		const document = await record.save()
-		console.log(line)
-		// console.log("Record Created: " + document);
+		// console.log(line)
 		console.log("Record Created: " + document._id)
 	} catch (err) {
 		console.error(err);
 	}
 }
-  
 
 function storeData(objRecord){
 	let record = new Record()
@@ -52,10 +71,10 @@ function storeData(objRecord){
 	record.MACAddress = objRecord.MACAddress
 	record.IPAddress = objRecord.IPAddress
 	record.HostName = objRecord.HostName
-
 	createRecord(record)
 }
 
 module.exports = {
-	storeData
+	storeData,
+	deleteAllRecords
 }

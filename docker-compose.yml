@@ -1,0 +1,14 @@
+version: '3.7'
+services:
+  app:
+    image: dhcp-client-counter:latest
+    restart: always
+    volumes:
+      logs:/app/dhcplogs
+volumes:
+  logs:
+    driver: local
+    driver_opts:
+      type: cifs
+      o: "o=addr=10.0.6.8,username=dhcplogfetcher,password=P@ssw0rd,file_mode=0777,dir_mode=0777"
+      device: "//10.0.6.8/dhcp"
