@@ -2,11 +2,21 @@ const mongoose = require('mongoose')
 const moment = require('moment')
 const line = '-'.repeat(process.stdout.columns)
 
-const dbServer		= process.env.MONGO_SERVER
-const dbUser		= process.env.MONGO_USER
-const dbPass		= process.env.MONGO_PASSWORD
-const dbName		= process.env.MONGO_DATABASE
-const dbCollection	= process.env.MONGO_DB_COLLECTION
+function checkEnvVars() {
+    const envVars = ['MONGO_SERVER', 'MONGO_USER', 'MONGO_PASSWORD', 'MONGO_DATABASE', 'MONGO_DB_COLLECTION'];
+    envVars.forEach(envVar => {
+        if (!process.env[envVar]) {
+            throw new Error(`Environment variable ${envVar} is not set`);
+        }
+    });
+}
+
+checkEnvVars();
+const dbServer     = process.env.MONGO_SERVER;
+const dbUser       = process.env.MONGO_USER;
+const dbPass       = process.env.MONGO_PASSWORD;
+const dbName       = process.env.MONGO_DATABASE;
+const dbCollection = process.env.MONGO_DB_COLLECTION;
 
 // Configure connection
 console.log("Connecting to MongoDB...")
