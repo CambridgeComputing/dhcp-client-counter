@@ -5,12 +5,12 @@ services:
     restart: always
     volumes:
       - logs:/app/dhcplogs
-  environment:
-    - MONGO_SERVER=10.0.1.8
-    - MONGO_USER=root
-    - MONGO_PASSWORD=password
-    - MONGO_DATABASE=dhcp-client-counter
-    - MONGO_DB_COLLECTION=clients
+    environment:
+      - MONGO_SERVER=10.0.1.8
+      - MONGO_USER=root
+      - MONGO_PASSWORD=password
+      - MONGO_DATABASE=dhcp-client-counter
+      - MONGO_DB_COLLECTION=clients
 
 volumes:
   logs:
