@@ -8,12 +8,12 @@ let objEntry = {}
 
 function readLogs() {
 // TODO: make a docker mount to bring in the network share...
-    const directoryPath = './dhcplogs';
+    const directoryPath = './dhcplogs'
 
     fs.readdir(directoryPath, (err, files) => {
         if (err) {
-            console.error("Error reading directory: " + err);
-            return;
+            console.error("Error reading directory: " + err)
+            return
         }
         files.forEach(file => {
             if (path.parse(file).name.startsWith('DhcpSrvLog')) {   // Excludes IPv6 logs
@@ -39,16 +39,20 @@ function readLogs() {
                         })
                         // Submit to database if the entry contains a MAC Address
                         if (objEntry.MACAddress !== ""){
-                            console.log(lineNumber + ": Found entry " + objEntry.MACAddress)
+                            // console.log(lineNumber + ": Found entry " + objEntry.MACAddress)
                             db.storeData(objEntry)
                             // db.deleteAllRecords()
                         }
                     }
                 })
             }
-        });
-    });
+        })
+    })
 
+module.exports = {
+    readLogs,
+    getDateTime
+}
 
 
 }

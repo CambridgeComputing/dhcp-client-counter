@@ -64,7 +64,7 @@ async function createRecord(record) {
 
 		if (existingRecord) {
 			// A record with the same MACAddress and Timestamp already exists
-			console.log("Record already exists. Skipping...");
+			// console.log("Record already exists. Skipping...");
 			return;
 		}
 		const document = await record.save()
@@ -72,6 +72,7 @@ async function createRecord(record) {
 		console.log("Record Created: " + document._id)
 	} catch (err) {
 		console.error(err);
+		return
 	}
 }
 
