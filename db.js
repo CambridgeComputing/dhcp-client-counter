@@ -69,7 +69,8 @@ async function createRecord(record) {
 		}
 		const document = await record.save()
 		// console.log(line)
-		console.log("Record Created: " + document._id)
+		// console.log("Record Created: " + document._id)
+		console.log("Record Created: MAC " + document.MACAddress)
 	} catch (err) {
 		console.error(err);
 		return
