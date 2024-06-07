@@ -48,13 +48,6 @@ function readLogs() {
             }
         })
     })
-
-module.exports = {
-    readLogs,
-    getDateTime
-}
-
-
 }
 
 module.exports = {
