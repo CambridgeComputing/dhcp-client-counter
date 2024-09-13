@@ -27,6 +27,7 @@ mongoose.connect(`mongodb://${dbUser}:${dbPass}@${dbServer}/${dbName}?authSource
 // Define Schema
 const recordSchema = new mongoose.Schema({
 	Timestamp: Date,    // Date and Time, needs to be stitched together from the logs
+	LogSource: String,	// WinServer, Fortigate
 	MACAddress: String, // MAC Address
 	IPAddress: String,  // IP Address
 	HostName: String	// Reported Hostname

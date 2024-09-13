@@ -3,7 +3,7 @@ require('dotenv').config()
 const dataCollection = require('./data-collection')
 
 function main(cb) {
-    dataCollection.readLogs()
+    dataCollection.readWindowsLogs()
 }
 
 console.log("Starting main loop.")

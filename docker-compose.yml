@@ -3,8 +3,9 @@ services:
   app:
     image: dhcp-client-counter:latest
     restart: always
-    volumes:
-      - logs:/app/dhcplogs
+    # volumes:
+    #   # For windows logs
+    #   - logs:/app/dhcplogs
     environment:
       - MONGO_SERVER=10.0.1.8
       - MONGO_USER=root
@@ -12,10 +13,11 @@ services:
       - MONGO_DATABASE=dhcp-client-counter
       - MONGO_DB_COLLECTION=clients
 
-volumes:
-  logs:
-    driver: local
-    driver_opts:
-      type: cifs
-      o: "addr=10.0.6.8,username=dhcplogfetcher,password=P@ssw0rd,file_mode=0777,dir_mode=0777"
-      device: "//10.0.6.8/dhcp"
+# For Windows logs - mount the DHCP logs directory of the remote Windows server via cifs
+# volumes:
+#   logs:
+#     driver: local
+#     driver_opts:
+#       type: cifs
+#       o: "addr=10.0.6.8,username=dhcplogfetcher,password=P@ssw0rd,file_mode=0777,dir_mode=0777"
+#       device: "//10.0.6.8/dhcp"
